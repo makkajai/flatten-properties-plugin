@@ -1,5 +1,8 @@
 async function processEvent(event, { config }) {
     try {
+        if (event.properties.event_properties) {
+            event.properties.event_properties = JSON.parse(event.properties.event_properties)
+        }
         if (event.event !== '$autocapture' && event.properties) {
             event.properties = flattenProperties(event.properties, config.separator)
         }
