@@ -25,6 +25,29 @@ const nestedEventProperties = {
     event_properties: '{"Name":"LevelName","Duration":"20"}'
 }
 
+const nestedEventProperties2 = {
+    a: {
+        b: {
+            c: {
+                d: {
+                    e: {
+                        f: 'nested under e'
+                    },
+                    z: 'nested under d'
+                },
+                z: 'nested under c'
+            },
+            z: 'nested under b'
+        },
+        z: 'nested under a'
+    },
+    w: {
+        array: [{ z: 'nested in w array' }]
+    },
+    x: 'not nested',
+    y: 'not nested either'
+}
+
 test('flattens all nested properties', async () => {
     const event = createEvent({ event: 'test', properties: nestedEventProperties })
 
@@ -44,6 +67,27 @@ test('flattens all nested properties', async () => {
         w__array__0__z: 'nested in w array',
         event_properties__Name: 'LevelName',
         event_properties__Duration: '20'
+    }
+
+    expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
+})
+
+test('flattens all nested properties negetive', async () => {
+    const event = createEvent({ event: 'test', properties: nestedEventProperties2 })
+
+    const eventsOutput = await processEvent(event, { config: { separator: '__' } })
+
+    const expectedProperties = {
+        a: nestedEventProperties2.a,
+        w: nestedEventProperties2.w,
+        x: 'not nested',
+        y: 'not nested either',
+        a__b__c__d__e__f: 'nested under e',
+        a__b__c__d__z: 'nested under d',
+        a__b__c__z: 'nested under c',
+        a__b__z: 'nested under b',
+        a__z: 'nested under a',
+        w__array__0__z: 'nested in w array'
     }
 
     expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
