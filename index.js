@@ -1,6 +1,8 @@
+var stringConstructor = 'test'.constructor
+
 async function processEvent(event, { config }) {
     try {
-        if (event.properties.event_properties) {
+        if (event.properties.event_properties && event.properties.event_properties.constructor === stringConstructor) {
             event.properties.event_properties = JSON.parse(event.properties.event_properties)
         }
         if (event.event !== '$autocapture' && event.properties) {
