@@ -25,6 +25,32 @@ const nestedEventProperties = {
     event_properties: '{"Name":"LevelName","Duration":"20"}'
 }
 
+const nestedEventProperties4 = {
+    a: {
+        b: {
+            c: {
+                d: {
+                    e: {
+                        f: 'nested under e'
+                    },
+                    z: 'nested under d'
+                },
+                z: 'nested under c'
+            },
+            z: 'nested under b'
+        },
+        z: 'nested under a'
+    },
+    w: {
+        array: [{ z: 'nested in w array' }]
+    },
+    x: 'not nested',
+    y: 'not nested either',
+    event_properties: {
+        attributionDetails: '{"a" : "b", "c" : { "d" : "e"}}'
+    }
+}
+
 const nestedEventProperties2 = {
     a: {
         b: {
@@ -208,5 +234,32 @@ test('flattens all event properties (Negetive)', async () => {
         event_properties__Name: 'LevelName',
         event_properties__Duration: '20'
     }
+    expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
+})
+
+test('flattens all event properties attribution', async () => {
+    const event = createEvent({ event: 'test', properties: nestedEventProperties4 })
+
+    const eventsOutput = await processEvent(event, { config: { separator: '__' } })
+
+    const expectedProperties = {
+        a: nestedEventProperties.a,
+        w: nestedEventProperties.w,
+        x: 'not nested',
+        y: 'not nested either',
+        event_properties: nestedEventProperties.event_properties,
+        a__b__c__d__e__f: 'nested under e',
+        a__b__c__d__z: 'nested under d',
+        a__b__c__z: 'nested under c',
+        a__b__z: 'nested under b',
+        a__z: 'nested under a',
+        w__array__0__z: 'nested in w array',
+        event_properties__Name: 'LevelName',
+        event_properties__Duration: '20',
+        event_properties__attributionDetails__a: 'b',
+        event_properties__attributionDetails__c__d: 'e'
+    }
+
+    console.log(eventsOutput)
     expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
 })
