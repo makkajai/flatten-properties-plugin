@@ -25,32 +25,6 @@ const nestedEventProperties = {
     event_properties: '{"Name":"LevelName","Duration":"20"}'
 }
 
-const nestedEventProperties4 = {
-    a: {
-        b: {
-            c: {
-                d: {
-                    e: {
-                        f: 'nested under e'
-                    },
-                    z: 'nested under d'
-                },
-                z: 'nested under c'
-            },
-            z: 'nested under b'
-        },
-        z: 'nested under a'
-    },
-    w: {
-        array: [{ z: 'nested in w array' }]
-    },
-    x: 'not nested',
-    y: 'not nested either',
-    event_properties: {
-        attributionDetails: '{"a" : "b", "c" : { "d" : "e"}}'
-    }
-}
-
 const nestedEventProperties2 = {
     a: {
         b: {
@@ -237,6 +211,32 @@ test('flattens all event properties (Negetive)', async () => {
     expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
 })
 
+const nestedEventProperties4 = {
+    a: {
+        b: {
+            c: {
+                d: {
+                    e: {
+                        f: 'nested under e'
+                    },
+                    z: 'nested under d'
+                },
+                z: 'nested under c'
+            },
+            z: 'nested under b'
+        },
+        z: 'nested under a'
+    },
+    w: {
+        array: [{ z: 'nested in w array' }]
+    },
+    x: 'not nested',
+    y: 'not nested either',
+    event_properties: {
+        attributionDetails: '{"a" : "b", "c" : { "d" : "e"}}'
+    }
+}
+
 test('flattens all event properties attribution', async () => {
     const event = createEvent({ event: 'test', properties: nestedEventProperties4 })
 
@@ -256,8 +256,8 @@ test('flattens all event properties attribution', async () => {
         w__array__0__z: 'nested in w array',
         event_properties__Name: 'LevelName',
         event_properties__Duration: '20',
-        event_properties__attributionDetails__a: 'b',
-        event_properties__attributionDetails__c__d: 'e'
+        event_properties__a: 'b',
+        event_properties__c__d: 'e'
     }
 
     console.log(eventsOutput)
