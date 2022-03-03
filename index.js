@@ -12,8 +12,13 @@ async function processEvent(event, { config }) {
         ) {
             event.properties.event_properties = { ...JSON.parse(event.properties.event_properties.attributionDetails) }
         }
+
         if (event.event !== '$autocapture' && event.properties) {
             event.properties = flattenProperties(event.properties, config.separator)
+        }
+
+        if (event.event === 'Attribution Identify' && event.properties.$set.attributes) {
+            delete event.properties.$set.attributes
         }
     } catch (e) {
         throw e

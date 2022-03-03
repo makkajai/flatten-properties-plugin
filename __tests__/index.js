@@ -260,6 +260,53 @@ test('flattens all event properties attribution', async () => {
         event_properties__c__d: 'e'
     }
 
-    console.log(eventsOutput)
+    // console.log(eventsOutput)
     expect(eventsOutput).toEqual(createEvent({ event: 'test', properties: expectedProperties }))
+})
+
+const nestedEventProperties5 = {
+    a: {
+        b: {
+            c: {
+                d: {
+                    e: {
+                        f: 'nested under e'
+                    },
+                    z: 'nested under d'
+                },
+                z: 'nested under c'
+            },
+            z: 'nested under b'
+        },
+        z: 'nested under a'
+    },
+    w: {
+        array: [{ z: 'nested in w array' }]
+    },
+    x: 'not nested',
+    y: 'not nested either',
+    $set: {
+        attributes: {
+            orgId: 1234567890,
+            campaignId: 1234567890,
+            conversionType: 'Download',
+            adGroupId: 1234567890,
+            countryOrRegion: 'US',
+            keywordId: 12323222,
+            creativeSetId: 1234567890,
+            attribution: true
+        },
+        attributes_created_date: '2022-01-18 08:46:38.0',
+        attributes_updated_date: '2022-01-18 08:46:38.0',
+        attributes_app_code: 'mm1'
+    }
+}
+
+test('flattens all event properties attribution 2', async () => {
+    const event = createEvent({ event: 'Attribution Identify', properties: nestedEventProperties5 })
+
+    const eventsOutput = await processEvent(event, { config: { separator: '__' } })
+
+    console.log(eventsOutput)
+    // expect(eventsOutput).toEqual(createEvent({ event: 'Attribution Notification', properties: expectedProperties }))
 })
